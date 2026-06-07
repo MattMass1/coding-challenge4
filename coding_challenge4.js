@@ -35,3 +35,80 @@ for (const product of products) {
 }
 
 
+
+
+function getCustomerDiscount(customerType) {
+  let extraDiscount;
+ 
+  if (customerType === "student") {
+    extraDiscount = 0.05; // 5% extra off total
+  } else if (customerType === "senior") {
+    extraDiscount = 0.07; // 7% extra off total
+  } else {
+    extraDiscount = 0.0; // regular customers get no extra discount
+  }
+ 
+  return extraDiscount;
+}
+ 
+
+const customers = [
+  { type: "regular", cart: [ { name: "Wireless Headphones", qty: 1 }, { name: "Notebook", qty: 2 } ] },
+  { type: "student", cart: [ { name: "Cotton T-Shirt", qty: 3 }, { name: "Whole Wheat Bread", qty: 1 } ] },
+  { type: "senior",  cart: [ { name: "Dish Soap", qty: 2 }, { name: "Whole Wheat Bread", qty: 4 } ] },
+];
+
+function findProduct(name) {
+  return products.find((p) => p.name === name);
+}
+
+let customerNumber = 1; 
+let i = 0;
+while (i < customers.length) {
+  const customer = customers[i];
+  let cartTotal = 0;
+ 
+  // Cycle through the items in this customer's cart.
+  for (const item of customer.cart) {
+    const product = findProduct(item.name);
+    if (!product) continue; 
+ 
+       
+    const quantitySold = Math.min(item.qty, product.inventory);
+    cartTotal += product.discountedPrice * quantitySold;
+ 
+    product.inventory -= quantitySold;
+  }
+ 
+  
+  const extraDiscount = getCustomerDiscount(customer.type);
+  const finalTotal = +(cartTotal * (1 - extraDiscount)).toFixed(2);
+
+
+  // Display customer number and total cost.
+  console.log(
+    `Customer #${customerNumber} (${customer.type}): ` +
+    `subtotal $${cartTotal.toFixed(2)}, ` +
+    `extra ${Math.round(extraDiscount * 100)}% off -> total $${finalTotal.toFixed(2)}`
+  );
+ 
+  customerNumber++;
+  i++;
+}
+
+
+const sampleProduct = products[0];
+console.log(`Details for "${sampleProduct.name}" after discounts:`);
+for (const key in sampleProduct) {
+  console.log(`  ${key}: ${sampleProduct[key]}`);
+}
+ 
+
+
+
+console.log("Final product report (post-checkout):");
+for (const product of products) {
+  for (const [field, value] of Object.entries(product)) {
+    console.log(`  ${field} => ${value}`);
+  }
+}
